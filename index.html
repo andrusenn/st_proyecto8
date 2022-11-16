@@ -54,7 +54,6 @@
 			}
 			//---- /do not edit the following code
 		</script>
-		<script defer src="./p5.min.js"></script>
 		<style>
 			html,
 			body {
@@ -94,56 +93,44 @@
 				height: 100%;
 				background: rgb(0, 0, 0);
 				z-index: 9999;
-			}
-			.overlay p {
-				display: inline-block;
-				position: relative;
 				opacity: 1;
-				transform: rotate(0) scale(1);
-				animation: 3s infinite forwards anim linear;
-				-moz-animation: 3s infinite forwards anim linear;
-				-webkit-animation: 3s infinite forwards anim linear;
 			}
-			.overlay p img {
-				object-fit: contain;
-				object-position: center;
-				max-width: 50px;
-				border-radius: 999px;
+			.overlay #bar {
+				position: relative;
+				background: transparent;
+				border: 1px solid #fff;
+				width: 250px;
+				height: 10px;
+				opacity: 0.5;
 			}
-			@keyframes anim {
-				0% {
-					transform: rotate(0) scale(1);
-					opacity: 1;
-				}
-				50% {
-					transform: rotate(180deg) scale(0.5);
-					opacity: 0;
-				}
-				100% {
-					transform: rotate(360deg) scale(1);
-					opacity: 1;
-				}
+			.overlay #bar > #innerbar {
+				position: absolute;
+				background: #eee;
+				top: 0;
+				left: 0;
+				width: 250px;
+				height: 10px;
+				transform-origin: 0 0;
+				transform: scale(0, 1);
+				opacity: 0.4;
+			}
+			.rendered {
+				-webkit-transition: opacity 2s ease-in-out;
+				-moz-transition: opacity 2s ease-in-out;
+				-ms-transition: opacity 2s ease-in-out;
+				-o-transition: opacity 2s ease-in-out;
+				opacity: 0;
 			}
 		</style>
 	</head>
 	<body>
-		<script
-			name="utils"
-			src="data:text/javascript;base64,ZnVuY3Rpb24gY3JlYXRlTEdyYWRpZW50KHQ9MCxuPTAsZT05OTkscj05OTksbz17fSl7bz17MDoiIzAwMCIsMToiI2ZmZiIsLi4ub307Y29uc3QgYT1kcmF3aW5nQ29udGV4dC5jcmVhdGVMaW5lYXJHcmFkaWVudCh0LG4sZSxyKTtyZXR1cm4gT2JqZWN0LmVudHJpZXMobykuZm9yRWFjaCh0PT57YS5hZGRDb2xvclN0b3AodFswXSx0WzFdKX0pLGF9ZnVuY3Rpb24gY3JlYXRlUkdyYWRpZW50KHQ9MCxuPTAsZT0wLHI9MjAwLG89MjAwLGE9MjAwLGQ9e30pe2Q9ezA6IiMwMDAiLDE6IiNmZmYiLC4uLmR9O2NvbnN0IGk9ZHJhd2luZ0NvbnRleHQuY3JlYXRlUmFkaWFsR3JhZGllbnQodCxuLGUscixvLGEpO3JldHVybiBPYmplY3QuZW50cmllcyhkKS5mb3JFYWNoKHQ9PntpLmFkZENvbG9yU3RvcCh0WzBdLHRbMV0pfSksaX1mdW5jdGlvbiBzaGFkb3codD0wLG49MCxlPTEwLHI9IiMwMDAiKXtkcmF3aW5nQ29udGV4dC5zaGFkb3dDb2xvcj1yLGRyYXdpbmdDb250ZXh0LnNoYWRvd09mZnNldFg9dCxkcmF3aW5nQ29udGV4dC5zaGFkb3dPZmZzZXRZPW4sZHJhd2luZ0NvbnRleHQuc2hhZG93Qmx1cj1lfWZ1bmN0aW9uIHNuYXAodCxuKXtyZXR1cm4gTWF0aC5mbG9vcih0L24pKm59"
-		></script>
-		<script
-			name="particle"
-			src="data:taxt/javascript;base64,Y2xhc3MgUGFydGljbGV7Y29uc3RydWN0b3IocyxpKXt0aGlzLnBvcz17eDpzLHk6aX0sdGhpcy54PXMsdGhpcy55PWksdGhpcy5pcG9zPXt4OnMseTppfSx0aGlzLnZlbD17eDowLHk6MH0sdGhpcy5tYXhEaWw9MjAsdGhpcy5hbmdsZT0wLHRoaXMuc2FuZ2xlPTAsdGhpcy5kaXI9e3g6MCx5OjB9LHRoaXMub2ZmPTAsdGhpcy5tdWx0PS41LHRoaXMubm9pc2U9MCx0aGlzLm5vaXNlX3NpemU9LjAwMyx0aGlzLm9mZmM9MCx0aGlzLmRhdGE9e30sdGhpcy5zbmFwLHRoaXMuc25hcGxlbj00MCx0aGlzLmNvdW50PTAsdGhpcy5zaGFrZT0hMX11cGRhdGUocyl7dGhpcy5ub2lzZT1zKHRoaXMucG9zLngqdGhpcy5ub2lzZV9zaXplLHRoaXMucG9zLnkqdGhpcy5ub2lzZV9zaXplLHRoaXMub2ZmKTtsZXQgaT10aGlzLm1heERpbDtpZih0aGlzLnNuYXB8fCh0aGlzLmFuZ2xlPXRoaXMubm9pc2UqVEFVKmktdGhpcy5zYW5nbGUpLHRoaXMuc25hcCYmdGhpcy5jb3VudCV0aGlzLnNuYXBsZW49PTAmJih0aGlzLmFuZ2xlPXRoaXMubm9pc2UqVEFVKmktdGhpcy5zYW5nbGUpLHJhbmRvbSgpPC41JiZ0aGlzLnNoYWtlJiYodGhpcy5hbmdsZSo9LTEwKSx0aGlzLmRpci54PWNvcyh0aGlzLmFuZ2xlKSx0aGlzLmRpci55PXNpbih0aGlzLmFuZ2xlKSx0aGlzLnNuYXApe2xldCBzPXJvdW5kKHRoaXMuYW5nbGUvdGhpcy5zbmFwKSp0aGlzLnNuYXA7dGhpcy5kaXIueD1jb3MocyksdGhpcy5kaXIueT1zaW4ocyl9dGhpcy52ZWwueCs9dGhpcy5kaXIueCx0aGlzLnZlbC55Kz10aGlzLmRpci55LHRoaXMudmVsLngqPXRoaXMubXVsdCx0aGlzLnZlbC55Kj10aGlzLm11bHQsdGhpcy5wb3MueCs9dGhpcy52ZWwueCx0aGlzLnBvcy55Kz10aGlzLnZlbC55LHRoaXMub2ZmKz10aGlzLm9mZmMsdGhpcy54PXRoaXMucG9zLngsdGhpcy55PXRoaXMucG9zLnksdGhpcy5jb3VudCsrfXJlc2V0KCl7dGhpcy5wb3Muc2V0KHRoaXMuaXBvcyl9fQ=="
-		></script>
-		<script
-			name="simplexnoise3d"
-			src="data:text/javascript;base64,Y29uc3QgRjM9MS8zLEczPTEvNixmYXN0Rmxvb3I9dD0+MHxNYXRoLmZsb29yKHQpLGdyYWQzPW5ldyBGbG9hdDY0QXJyYXkoWzEsMSwwLC0xLDEsMCwxLC0xLDAsLTEsLTEsMCwxLDAsMSwtMSwwLDEsMSwwLC0xLC0xLDAsLTEsMCwxLDEsMCwtMSwxLDAsMSwtMSwwLC0xLC0xXSk7ZnVuY3Rpb24gY3JlYXRlTm9pc2UzRCh0PU1hdGgucmFuZG9tKXtjb25zdCBvPWJ1aWxkUGVybXV0YXRpb25UYWJsZSh0KSxlPW5ldyBGbG9hdDY0QXJyYXkobykubWFwKHQ9PmdyYWQzW3QlMTIqM10pLHI9bmV3IEZsb2F0NjRBcnJheShvKS5tYXAodD0+Z3JhZDNbdCUxMiozKzFdKSxhPW5ldyBGbG9hdDY0QXJyYXkobykubWFwKHQ9PmdyYWQzW3QlMTIqMysyXSk7cmV0dXJuIGZ1bmN0aW9uKHQsbixsKXtsZXQgcyxmLGMsaTtjb25zdCBHPSh0K24rbCkqRjMsdT1mYXN0Rmxvb3IodCtHKSxGPWZhc3RGbG9vcihuK0cpLGQ9ZmFzdEZsb29yKGwrRyksbT0odStGK2QpKkczLHc9dC0odS1tKSx5PW4tKEYtbSksQT1sLShkLW0pO2xldCBiLGcscCxoLE0sUDt3Pj15P3k+PUE/KGI9MSxnPTAscD0wLGg9MSxNPTEsUD0wKTp3Pj1BPyhiPTEsZz0wLHA9MCxoPTEsTT0wLFA9MSk6KGI9MCxnPTAscD0xLGg9MSxNPTAsUD0xKTp5PEE/KGI9MCxnPTAscD0xLGg9MCxNPTEsUD0xKTp3PEE/KGI9MCxnPTEscD0wLGg9MCxNPTEsUD0xKTooYj0wLGc9MSxwPTAsaD0xLE09MSxQPTApO2NvbnN0IFQ9dy1iK0czLEQ9eS1nK0czLE49QS1wK0czLFU9dy1oKzIqRzMsaj15LU0rMipHMyxrPUEtUCsyKkczLHE9dy0xKzMqRzMsdj15LTErMypHMyx4PUEtMSszKkczLHo9MjU1JnUsQj0yNTUmRixDPTI1NSZkO2xldCBFPS42LXcqdy15KnktQSpBO2lmKEU8MClzPTA7ZWxzZXtjb25zdCB0PXorb1tCK29bQ11dO3M9KEUqPUUpKkUqKGVbdF0qdytyW3RdKnkrYVt0XSpBKX1sZXQgSD0uNi1UKlQtRCpELU4qTjtpZihIPDApZj0wO2Vsc2V7Y29uc3QgdD16K2Irb1tCK2crb1tDK3BdXTtmPShIKj1IKSpIKihlW3RdKlQrclt0XSpEK2FbdF0qTil9bGV0IEk9LjYtVSpVLWoqai1rKms7aWYoSTwwKWM9MDtlbHNle2NvbnN0IHQ9eitoK29bQitNK29bQytQXV07Yz0oSSo9SSkqSSooZVt0XSpVK3JbdF0qaithW3RdKmspfWxldCBKPS42LXEqcS12KnYteCp4O2lmKEo8MClpPTA7ZWxzZXtjb25zdCB0PXorMStvW0IrMStvW0MrMV1dO2k9KEoqPUopKkoqKGVbdF0qcStyW3RdKnYrYVt0XSp4KX1yZXR1cm4gMzIqKHMrZitjK2kpfX1mdW5jdGlvbiBidWlsZFBlcm11dGF0aW9uVGFibGUodCl7Y29uc3Qgbz1uZXcgVWludDhBcnJheSg1MTIpO2ZvcihsZXQgdD0wO3Q8MjU2O3QrKylvW3RdPXQ7Zm9yKGxldCBlPTA7ZTwyNTU7ZSsrKXtjb25zdCByPWUrfn4odCgpKigyNTYtZSkpLGE9b1tlXTtvW2VdPW9bcl0sb1tyXT1hfWZvcihsZXQgdD0yNTY7dDw1MTI7dCsrKW9bdF09b1t0LTI1Nl07cmV0dXJuIG99"
-		></script>
-		<script src="index.js"></script>
+		<script src="./p5.min.js"></script>
+		<script src="./utils.min.js"></script>
+		<script src="./Particle.min.js"></script>
+		<script src="./simplexN3D.min.js"></script>
+		<script src="./index.js"></script>
 		<div class="overlay">
-			<p>
-				<img src="./loading.jpg" alt="loading" />
-			</p>
+			<div id="bar"><div id="innerbar"></div></div>
 		</div>
 	</body>
 </html>

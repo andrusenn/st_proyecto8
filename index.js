@@ -1,13 +1,12 @@
 /*
-Project s/t - untitled
+Project 8 | s/t - untitled
 fxhashturnsone
-
-ooywmPMjZFcvxNNYjKc9oYiTvvmE4PN9HBFDejyC6PazHsPPKeC
-oodpa2HdUvKtRWKu4Pd4jo9q6rPUsZf8jRPoZUHHXjmHrtpP2rZ
+Preview: oo3pxFYgLf4bqTVrt8SR5WmYLquDmupuR4TRDQrPsF19Xk3t6gY
 */
 
 let overlay,
 	loaded = false,
+	innerbar,
 	seed,
 	cv,
 	snoise,
@@ -17,8 +16,9 @@ let overlay,
 	maxs,
 	maxds,
 	mins,
-	frame;
-let part = [],
+	pload = 0,
+	renderFrames = 800,
+	part = [],
 	palC = [
 		[94, 27, 30],
 		[10, 42, 38],
@@ -31,8 +31,9 @@ function setup() {
 	randomSeed(seed);
 	snoise = createNoise3D(random);
 	overlay = document.querySelector(".overlay");
+	innerbar = document.querySelector("#innerbar");
 	cv = createCanvas(1200, 1800);
-	cv.id("c");
+	cv.id("untitledp8");
 	cv.class("_");
 	rot = snap(random(TAU), PI / 4);
 	vert = random() < 0.5;
@@ -109,11 +110,33 @@ function setup() {
 		p.snaplen = p.data.sl;
 		part.push(p);
 	}
-	translate(width / 2, height / 2);
-	scale(1.4);
-	rotate(rot);
-	translate(-width / 2, -height / 2);
-	for (frame = 0; frame < 800; frame++) {
+
+	document.title = `s/t - Proyecto #8 | Andr\u00e9s Senn | Noviembre - 2022`;
+	console.log(
+		`%cs/t - Proyecto #8 | Andr\u00e9s Senn 2022 | github: https://github.com/andrusenn/st_proyecto8`,
+		"background:#333;border-radius:10px;background-size:15%;color:#eee;padding:10px;font-size:15px;text-align:center;",
+	);
+}
+function flor(x, y, r, p) {
+	for (let m = 0; m < p; m++) {
+		let a = (TAU / p) * m;
+
+		let _x = x + cos(a) * r;
+		let _y = y + sin(a) * r;
+		stroke(random(256), 127);
+		strokeWeight(0.8);
+		line(x, y, _x, _y);
+		fill(random(256), 127);
+		noStroke();
+		circle(_x, _y, 4);
+	}
+}
+function draw() {
+	if (frameCount < renderFrames) {
+		translate(width / 2, height / 2);
+		scale(1.6);
+		rotate(rot);
+		translate(-width / 2, -height / 2);
 		part.forEach((p, i) => {
 			p.update(snoise);
 			p.data.r *= p.data.s;
@@ -125,14 +148,14 @@ function setup() {
 
 			fill(pal[0], pal[1], pal[2], 20);
 			circle(p.x + 2, p.y + 2, p.data.r);
-			if (frame % 40 > 20 && random() < 0.2) {
+			if (frameCount % 40 > 20 && random() < 0.2) {
 				fill(int(random(0, 360)), 100, 40);
 				circle(p.x + random(-20, 20), p.y, p.data.r);
 			} else {
 				fill(255);
 				circle(p.x, p.y, p.data.r);
 			}
-			if (frame % 50 > 48 && random() < 0.2) {
+			if (frameCount % 50 > 48 && random() < 0.2) {
 				fill(255);
 				flor(p.x, p.y, random(4, 30), 3);
 			}
@@ -143,7 +166,7 @@ function setup() {
 			circle(p.x + 50, p.y + 50, 1);
 		});
 		noSmooth();
-		if (frame % 4 == 0) {
+		if (frameCount % 4 == 0) {
 			if (vert) {
 				let im = get(
 					0,
@@ -163,7 +186,7 @@ function setup() {
 			}
 		}
 		if (part.length < 500) {
-			if (frame % 80 == 0) {
+			if (frameCount % 80 == 0) {
 				let tempP = [];
 				part.forEach((p) => {
 					for (let i = 0; i < 2; i++) {
@@ -181,33 +204,17 @@ function setup() {
 				part = tempP;
 			}
 		}
-	}
-	overlay.style.display = "none";
-	if (!isFxpreview) {
+		pload = frameCount / renderFrames;
+		innerbar.style = "transform: scale(" + pload + ",1)";
+	} else {
+		overlay.classList.add("rendered");
+		overlay.addEventListener("transitionend", () => {
+			overlay.style.display = "none";
+		});
+		noLoop();
 		fxpreview();
 	}
-
-	document.title = `s/t - Proyecto #8 | Andr\u00e9s Senn | Noviembre - 2022`;
-	console.log(
-		`%cs/t - Proyecto #8 | Andr\u00e9s Senn 2022`,
-		"background:#333;border-radius:10px;background-size:15%;color:#eee;padding:10px;font-size:15px;text-align:center;",
-	);
 }
-function flor(x, y, r, p) {
-	for (let m = 0; m < p; m++) {
-		let a = (TAU / p) * m;
-
-		let _x = x + cos(a) * r;
-		let _y = y + sin(a) * r;
-		stroke(random(256), 127);
-		strokeWeight(0.8);
-		line(x, y, _x, _y);
-		fill(random(256), 127);
-		noStroke();
-		circle(_x, _y, 4);
-	}
-}
-function draw() {}
 function keyReleased() {
 	switch (key) {
 		case "1":
@@ -222,15 +229,6 @@ function keyReleased() {
 	}
 	if (key == "s" || key == "S") {
 		grabImage();
-	}
-	if (key == "l" || key == "L") {
-		beyond = true;
-		if (!isLooping) {
-			loop();
-		} else {
-			noLoop();
-		}
-		isLooping = !isLooping;
 	}
 }
 
